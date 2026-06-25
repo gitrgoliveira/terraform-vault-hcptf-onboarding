@@ -33,8 +33,3 @@ variable "tfe_organization" {
   description = "HCP Terraform organization name."
   type        = string
 }
-
-variable "vault_address" {
-  description = "HCP Vault address."
-  type        = string
-}

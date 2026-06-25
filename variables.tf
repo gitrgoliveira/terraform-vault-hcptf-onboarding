@@ -9,13 +9,28 @@ variable "tenant" {
   type        = string
 }
 
-variable "tfe_organization" {
-  description = "HCP Terraform organization name."
-  type        = string
+# Supplied automatically by HCP Terraform when the workspace has Vault dynamic
+# provider credentials (the TFC_VAULT_* environment variables) configured.
+variable "tfc_vault_dynamic_credentials" {
+  description = "Vault dynamic provider credentials, injected by HCP Terraform."
+  type = object({
+    default = object({
+      token_filename = string
+      address        = string
+      namespace      = string
+      ca_cert_file   = string
+    })
+    aliases = map(object({
+      token_filename = string
+      address        = string
+      namespace      = string
+      ca_cert_file   = string
+    }))
+  })
 }
 
-variable "vault_address" {
-  description = "HCP Vault address, written into each project's variable set."
+variable "tfe_organization" {
+  description = "HCP Terraform organization name."
   type        = string
 }
 
