@@ -1,0 +1,27 @@
+# Local .terraform directories (providers, modules cache)
+.terraform/
+
+# State files (a reusable module repo must never contain these)
+*.tfstate
+*.tfstate.*
+.terraform.tfstate.lock.info
+
+# Crash logs
+crash.log
+crash.*.log
+
+# Variable files that may hold sensitive values (keep *.tfvars.example)
+*.tfvars
+*.tfvars.json
+!*.tfvars.example
+
+# Saved plan output
+*.tfplan
+
+# Override files
+override.tf
+override.tf.json
+*_override.tf
+*_override.tf.json
+
+# The provider dependency lock file is intentionally kept (committed).
