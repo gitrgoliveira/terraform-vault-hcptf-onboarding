@@ -8,11 +8,10 @@ A no-code ready module that onboards one tenant onto HCP Vault from HCP Terrafor
 |---|---|---|---|
 | `environments` | `list(string)` | `["dev", "test", "prod"]` | Environments to onboard for the tenant |
 | `tenant` | `string` | none | Tenant name; used in project names and the tenant namespace path |
-| `tfe_organization` | `string` | none | HCP Terraform organization name |
 | `vault_auth_path` | `string` | `"tf_jwt"` | JWT auth mount path inside each tenant namespace |
 | `vault_role_name` | `string` | `"hcp-tf"` | JWT role name created in each tenant namespace |
 
-`tfc_vault_dynamic_credentials` is supplied automatically by HCP Terraform from the workspace's `TFC_VAULT_*` variables; do not set it manually.
+The HCP Terraform organization is derived from `TFC_WORKSPACE_SLUG`, and `tfc_vault_dynamic_credentials` carries the Vault address used for the downstream tenant variable sets. Both are supplied automatically by HCP Terraform; do not set them manually.
 
 ## Outputs
 
@@ -38,7 +37,7 @@ Grant the no-code workspaces their credentials with a **project-scoped variable 
 | `TFC_VAULT_AUTH_PATH` | env | JWT auth mount path (for example `tf_jwt`) |
 | `TFE_TOKEN` | env (sensitive) | team token able to manage projects and variable sets |
 
-HCP Terraform reads the `TFC_VAULT_*` variables, authenticates the `vault` provider, and populates the `tfc_vault_dynamic_credentials` input automatically. Because the Vault address comes from `TFC_VAULT_ADDR`, it is not a module input.
+HCP Terraform reads the `TFC_VAULT_*` variables, injects `VAULT_ADDR` / `VAULT_NAMESPACE` and a Vault token into the run environment (which the `vault` provider authenticates from directly), and also populates the `tfc_vault_dynamic_credentials` input. The module reads only the Vault address from that input, to wire the downstream tenant variable sets, so the address is not a module input.
 
 ## Isolation
 

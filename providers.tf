@@ -9,12 +9,10 @@ provider "tfe" {
 }
 
 provider "vault" {
-  # skip_child_token must be true; HCP Terraform manages the token lifecycle.
+  # HCP Terraform injects VAULT_ADDR, VAULT_NAMESPACE, and a short-lived Vault
+  # token into the run environment from the workspace's TFC_VAULT_* dynamic
+  # provider credentials, so the provider authenticates with no explicit
+  # arguments. skip_child_token is required because HCP Terraform owns the
+  # token lifecycle.
   skip_child_token = true
-  address          = var.tfc_vault_dynamic_credentials.default.address
-  namespace        = var.tfc_vault_dynamic_credentials.default.namespace
-
-  auth_login_token_file {
-    filename = var.tfc_vault_dynamic_credentials.default.token_filename
-  }
 }

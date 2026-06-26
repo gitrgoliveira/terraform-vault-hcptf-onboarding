@@ -9,10 +9,13 @@ variable "tenant" {
   type        = string
 }
 
-# Supplied automatically by HCP Terraform when the workspace has Vault dynamic
-# provider credentials (the TFC_VAULT_* environment variables) configured.
+# Auto-populated by HCP Terraform when the workspace has Vault dynamic provider
+# credentials configured. The module does NOT use this to authenticate (the
+# injected VAULT_ADDR / VAULT_NAMESPACE / VAULT_TOKEN env vars handle that). It
+# only reads .default.address, to propagate the Vault URL into the per-tenant
+# variable sets it creates.
 variable "tfc_vault_dynamic_credentials" {
-  description = "Vault dynamic provider credentials, injected by HCP Terraform."
+  description = "Vault dynamic provider credentials injected by HCP Terraform. Only the address is read, to populate the downstream tenant variable sets."
   type = object({
     default = object({
       token_filename = string
