@@ -11,16 +11,7 @@ mock_provider "vault" {}
 variables {
   tenant             = "acme"
   TFC_WORKSPACE_SLUG = "example-org/onboarding"
-
-  tfc_vault_dynamic_credentials = {
-    default = {
-      token_filename = "/tmp/vault-token"
-      address        = "https://vault.example.com:8200"
-      namespace      = "admin"
-      ca_cert_file   = ""
-    }
-    aliases = {}
-  }
+  vault_address      = "https://vault.example.hashicorp.cloud:8200"
 }
 
 run "default_environments_create_three_projects" {

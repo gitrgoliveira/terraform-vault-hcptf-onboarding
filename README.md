@@ -8,10 +8,11 @@ A no-code ready module that onboards one tenant onto HCP Vault from HCP Terrafor
 |---|---|---|---|
 | `environments` | `list(string)` | `["dev", "test", "prod"]` | Environments to onboard for the tenant |
 | `tenant` | `string` | none | Tenant name; used in project names and the tenant namespace path |
+| `vault_address` | `string` | `""` | HCP Vault address; supplied via the `TF_VAR_vault_address` env var from the project variable set |
 | `vault_auth_path` | `string` | `"tf_jwt"` | JWT auth mount path inside each tenant namespace |
 | `vault_role_name` | `string` | `"hcp-tf"` | JWT role name created in each tenant namespace |
 
-The HCP Terraform organization is derived from `TFC_WORKSPACE_SLUG`, and `tfc_vault_dynamic_credentials` carries the Vault address used for the downstream tenant variable sets. Both are supplied automatically by HCP Terraform; do not set them manually.
+The HCP Terraform organization is derived from `TFC_WORKSPACE_SLUG`, and the Vault address arrives as `var.vault_address`, populated by the `TF_VAR_vault_address` environment variable that the project variable set supplies. Both are provided through HCP Terraform; do not set them manually.
 
 ## Outputs
 
@@ -35,9 +36,19 @@ Grant the no-code workspaces their credentials with a **project-scoped variable 
 | `TFC_VAULT_NAMESPACE` | env | `admin` (the namespace the module manages) |
 | `TFC_VAULT_RUN_ROLE` | env | the admin JWT role |
 | `TFC_VAULT_AUTH_PATH` | env | JWT auth mount path (for example `tf_jwt`) |
+| `TF_VAR_vault_address` | env | HCP Vault address, read by the module as `var.vault_address` |
 | `TFE_TOKEN` | env (sensitive) | team token able to manage projects and variable sets |
 
-HCP Terraform reads the `TFC_VAULT_*` variables, injects `VAULT_ADDR` / `VAULT_NAMESPACE` and a Vault token into the run environment (which the `vault` provider authenticates from directly), and also populates the `tfc_vault_dynamic_credentials` input. The module reads only the Vault address from that input, to wire the downstream tenant variable sets, so the address is not a module input.
+### How credentials and identifiers reach the module
+
+HCP Terraform turns those `TFC_VAULT_*` variables into [Vault dynamic provider credentials](https://developer.hashicorp.com/terraform/cloud-docs/dynamic-provider-credentials/vault-configuration): for each run it authenticates with the admin JWT role and injects `VAULT_ADDR`, `VAULT_NAMESPACE`, and a short-lived token into the run environment. The module's `vault` provider reads those directly, so it sets only `skip_child_token = true` with no `address`, `namespace`, or `token` arguments.
+
+Those are *environment* variables, and Terraform configuration cannot read environment variables directly. Only variables passed as `TF_VAR_*`, or values fetched through the `external` data source, are readable in configuration (see [Reading and using environment variables in Terraform runs](https://support.hashicorp.com/hc/en-us/articles/4547786359571-Reading-and-using-environment-variables-in-Terraform-runs)). So the two values the module needs *in configuration* arrive through Terraform input variables instead:
+
+* **Organization name** comes from `TFC_WORKSPACE_SLUG`. HCP Terraform injects a fixed set of [run-environment variables](https://developer.hashicorp.com/terraform/cloud-docs/workspaces/run/run-environment) and also exposes them as same-named Terraform input variables, so `var.TFC_WORKSPACE_SLUG` (form `<org>/<workspace>`) yields the organization.
+* **Vault address** comes from `var.vault_address`, populated by the `TF_VAR_vault_address` environment variable that the project variable set supplies. (`TF_VAR_`-prefixed env vars are the supported way to feed an environment value into a Terraform variable.) The plain `TFC_VAULT_ADDR` that authenticates the provider is *not* readable in configuration, which is why the admin variable set delivers the address a second time as `TF_VAR_vault_address`.
+
+The module copies that address into `TFC_VAULT_ADDR` on each `<tenant>-Vault-<env>` variable set it creates, so the tenant's future workspaces authenticate to the same Vault. Neither value is a hand-entered module argument.
 
 ## Isolation
 

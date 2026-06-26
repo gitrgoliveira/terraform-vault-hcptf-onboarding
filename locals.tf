@@ -11,7 +11,7 @@ locals {
       for env in var.environments : [
         for kv in [
           { key = "TFC_VAULT_PROVIDER_AUTH", value = "true" },
-          { key = "TFC_VAULT_ADDR", value = var.tfc_vault_dynamic_credentials.default.address },
+          { key = "TFC_VAULT_ADDR", value = var.vault_address },
           { key = "TFC_VAULT_NAMESPACE", value = trimsuffix(vault_namespace.tenant[env].id, "/") },
           { key = "TFC_VAULT_RUN_ROLE", value = var.vault_role_name },
           { key = "TFC_VAULT_AUTH_PATH", value = var.vault_auth_path },

@@ -9,33 +9,20 @@ variable "tenant" {
   type        = string
 }
 
-# Auto-populated by HCP Terraform when the workspace has Vault dynamic provider
-# credentials configured. The module does NOT use this to authenticate (the
-# injected VAULT_ADDR / VAULT_NAMESPACE / VAULT_TOKEN env vars handle that). It
-# only reads .default.address, to propagate the Vault URL into the per-tenant
-# variable sets it creates.
-variable "tfc_vault_dynamic_credentials" {
-  description = "Vault dynamic provider credentials injected by HCP Terraform. Only the address is read, to populate the downstream tenant variable sets."
-  type = object({
-    default = object({
-      token_filename = string
-      address        = string
-      namespace      = string
-      ca_cert_file   = string
-    })
-    aliases = map(object({
-      token_filename = string
-      address        = string
-      namespace      = string
-      ca_cert_file   = string
-    }))
-  })
-}
-
 # Injected automatically by HCP Terraform (see https://developer.hashicorp.com/terraform/cloud-docs/workspaces/run/run-environment).
 # The slug has the form "<organization>/<workspace>".
 variable "TFC_WORKSPACE_SLUG" {
   description = "Workspace slug injected by HCP Terraform. Used to derive the organization name."
+  type        = string
+  default     = ""
+}
+
+# Populated by the TF_VAR_vault_address environment variable that the admin
+# project variable set supplies. Terraform cannot read plain env vars (only
+# TF_VAR_-prefixed ones), so the admin module exposes the Vault address this way.
+# Written into the per-tenant variable sets the module creates. Not entered by hand.
+variable "vault_address" {
+  description = "HCP Vault address, supplied via the TF_VAR_vault_address environment variable from the project variable set. Written into the downstream tenant variable sets."
   type        = string
   default     = ""
 }
