@@ -84,6 +84,11 @@ run "outputs_expose_every_environment" {
   }
 
   assert {
+    condition     = length(output.project_names) == 3
+    error_message = "project_names output should contain one entry per environment."
+  }
+
+  assert {
     condition     = length(output.variable_set_ids) == 3
     error_message = "variable_set_ids output should contain one entry per environment."
   }
@@ -91,6 +96,11 @@ run "outputs_expose_every_environment" {
   assert {
     condition     = length(output.role_names) == 3
     error_message = "role_names output should contain one entry per environment."
+  }
+
+  assert {
+    condition     = length(output.vault_namespaces) == 3
+    error_message = "vault_namespaces output should contain one entry per environment."
   }
 }
 

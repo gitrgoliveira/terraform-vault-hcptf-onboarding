@@ -19,9 +19,11 @@ The HCP Terraform organization is derived from `TFC_WORKSPACE_SLUG`, and the Vau
 | Name | Description |
 |---|---|
 | `project_ids` | Map env to `<tenant>-Vault-<env>` project ID |
+| `project_names` | Map env to `<tenant>-Vault-<env>` project name |
 | `role_names` | Map env to JWT role name |
-| `tenant_namespace_paths` | Map env to tenant namespace `path_fq` |
+| `tenant_namespace_paths` | Map env to tenant namespace `path_fq` (relative to the admin namespace, e.g. `<env>/<tenant>`) |
 | `variable_set_ids` | Map env to variable set ID |
+| `vault_namespaces` | Map env to the fully qualified Vault namespace from the cluster root (`admin/<env>/<tenant>`) |
 
 ## No-code provisioning
 
