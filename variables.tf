@@ -29,9 +29,12 @@ variable "tfc_vault_dynamic_credentials" {
   })
 }
 
-variable "tfe_organization" {
-  description = "HCP Terraform organization name."
+# Injected automatically by HCP Terraform (see https://developer.hashicorp.com/terraform/cloud-docs/workspaces/run/run-environment).
+# The slug has the form "<organization>/<workspace>".
+variable "TFC_WORKSPACE_SLUG" {
+  description = "Workspace slug injected by HCP Terraform. Used to derive the organization name."
   type        = string
+  default     = ""
 }
 
 variable "vault_auth_path" {

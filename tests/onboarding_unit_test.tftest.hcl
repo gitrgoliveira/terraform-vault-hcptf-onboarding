@@ -9,8 +9,8 @@ mock_provider "tfe" {}
 mock_provider "vault" {}
 
 variables {
-  tenant           = "acme"
-  tfe_organization = "example-org"
+  tenant             = "acme"
+  TFC_WORKSPACE_SLUG = "example-org/onboarding"
 
   tfc_vault_dynamic_credentials = {
     default = {

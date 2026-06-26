@@ -5,7 +5,7 @@
 # provider, and a TFE_TOKEN team token for the tfe provider.
 
 provider "tfe" {
-  organization = var.tfe_organization
+  organization = local.tfe_organization
 }
 
 provider "vault" {

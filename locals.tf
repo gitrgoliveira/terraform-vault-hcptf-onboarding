@@ -1,4 +1,8 @@
 locals {
+  # Organization name derived from the HCP Terraform workspace slug ("<org>/<workspace>").
+  # This is injected automatically by HCP Terraform so no explicit input variable is needed.
+  tfe_organization = split("/", var.TFC_WORKSPACE_SLUG)[0]
+
   # Flattened "<env>/<key>" -> definition map for the per-project Vault dynamic
   # provider credentials environment variables. Map keys are static (derived from
   # var.environments), so this is valid as a for_each source.

@@ -4,7 +4,7 @@ resource "tfe_project" "env" {
   for_each = toset(var.environments)
 
   name         = "${var.tenant}-Vault-${each.key}"
-  organization = var.tfe_organization
+  organization = local.tfe_organization
   description  = "HCP Vault access for tenant ${var.tenant}, ${each.key} environment."
 }
 
@@ -53,7 +53,7 @@ resource "vault_jwt_auth_backend_role" "env" {
   bound_audiences = ["vault.workload.identity"]
   bound_claims = {
     # Only tokens from this organization and this environment's project are accepted.
-    terraform_organization_name = var.tfe_organization
+    terraform_organization_name = local.tfe_organization
     terraform_project_id        = tfe_project.env[each.key].id
   }
 
@@ -69,7 +69,7 @@ resource "tfe_variable_set" "env" {
 
   name         = "${var.tenant}-Vault-${each.key}"
   description  = "Vault dynamic provider credentials for ${var.tenant} ${each.key} workspaces."
-  organization = var.tfe_organization
+  organization = local.tfe_organization
 }
 
 resource "tfe_variable" "env" {
