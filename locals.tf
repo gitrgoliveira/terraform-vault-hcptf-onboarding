@@ -15,6 +15,8 @@ locals {
           { key = "TFC_VAULT_NAMESPACE", value = trimsuffix(vault_namespace.tenant[env].id, "/") },
           { key = "TFC_VAULT_RUN_ROLE", value = var.vault_role_name },
           { key = "TFC_VAULT_AUTH_PATH", value = var.vault_auth_path },
+          { key = "TF_VAR_vault_address", value = var.vault_address },
+          { key = "TF_VAR_vault_namespace", value = trimsuffix(vault_namespace.tenant[env].id, "/") },
           ] : {
           env   = env
           key   = kv.key
