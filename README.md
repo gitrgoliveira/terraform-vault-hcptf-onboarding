@@ -7,6 +7,7 @@ A no-code ready module that onboards one tenant onto HCP Vault from HCP Terrafor
 | Name | Type | Default | Description |
 |---|---|---|---|
 | `environments` | `list(string)` | `["dev", "test", "prod"]` | Environments to onboard for the tenant |
+| `project_tags` | `map(string)` | `{ Product = "Vault" }` | Tag bindings applied to each `<tenant>-Vault-<env>` project; workspaces created in the project inherit them as effective tags |
 | `tenant` | `string` | none | Tenant name; used in project names and the tenant namespace path |
 | `vault_address` | `string` | `""` | HCP Vault address; supplied via the `TF_VAR_vault_address` env var from the project variable set |
 | `vault_auth_path` | `string` | `"tf_jwt"` | JWT auth mount path inside each tenant namespace |

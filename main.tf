@@ -6,6 +6,7 @@ resource "tfe_project" "env" {
   name         = "${var.tenant}-Vault-${each.key}"
   organization = local.tfe_organization
   description  = "HCP Vault access for tenant ${var.tenant}, ${each.key} environment."
+  tags         = var.project_tags
 }
 
 # ── Tenant namespaces (admin/<env>/<tenant>) ──────────────────────────────────

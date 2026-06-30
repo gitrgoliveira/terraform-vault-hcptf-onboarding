@@ -4,6 +4,14 @@ variable "environments" {
   default     = ["dev", "test", "prod"]
 }
 
+# Applied to each <tenant>-Vault-<env> project as tag bindings; every workspace
+# created in the project inherits them as effective tags.
+variable "project_tags" {
+  description = "Tag bindings applied to each <tenant>-Vault-<env> project. Workspaces created in the project inherit them as effective tags."
+  type        = map(string)
+  default     = { Product = "Vault" }
+}
+
 variable "tenant" {
   description = "Tenant name. Used in project names and the tenant namespace path."
   type        = string

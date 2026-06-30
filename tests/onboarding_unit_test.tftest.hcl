@@ -31,6 +31,11 @@ run "default_environments_create_three_projects" {
     condition     = tfe_project.env["prod"].organization == "example-org"
     error_message = "Projects should belong to the configured organization."
   }
+
+  assert {
+    condition     = tfe_project.env["dev"].tags["Product"] == "Vault"
+    error_message = "Projects should carry the default Product=Vault tag binding."
+  }
 }
 
 run "namespaces_nest_tenant_under_env" {
