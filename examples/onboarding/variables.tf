@@ -13,6 +13,7 @@ variable "TFC_WORKSPACE_SLUG" {
   description = "Workspace slug injected by HCP Terraform. Used to derive the organization name."
   type        = string
   default     = ""
+  # echo-scan:allow HCP Terraform run-injected root variable
 }
 
 # Supplied via the TF_VAR_vault_address environment variable from the admin
