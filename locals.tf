@@ -39,6 +39,16 @@ locals {
     path "sys/auth"           { capabilities = ["read"] }
     path "sys/auth/*"         { capabilities = ["create", "read", "update", "delete", "sudo"] }
     path "sys/policies/acl/*" { capabilities = ["create", "read", "update", "delete", "list"] }
+
+    # identity management (entities, aliases, groups)
+    path "identity/entity"          { capabilities = ["create", "update"] }
+    path "identity/entity/*"        { capabilities = ["create", "read", "update", "delete", "list"] }
+    path "identity/entity-alias"    { capabilities = ["create", "update"] }
+    path "identity/entity-alias/*"  { capabilities = ["create", "read", "update", "delete", "list"] }
+    path "identity/group"           { capabilities = ["create", "update"] }
+    path "identity/group/*"         { capabilities = ["create", "read", "update", "delete", "list"] }
+    path "identity/lookup/entity"   { capabilities = ["update"] }
+
     path "*"                  { capabilities = ["create", "read", "update", "delete", "list"] }
   EOT
 }
