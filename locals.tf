@@ -26,18 +26,27 @@ locals {
     ]) : "${item.env}/${item.key}" => item
   }
 
-  # Placeholder tenant policy. Review and tighten before production use.
+  # Least-privilege tenant policy, scoped to the paths the L1-L3 onboarding
+  # modules manage: JWT trust mounts, kv/db secret-mount lifecycle, ACL
+  # policies, and identity objects. Onboarding workspaces get the auth/jwt*
+  # and db/* data planes (backend config, roles, connections) but can NOT
+  # read workload kv data — no module needs it, and the workspace token
+  # should not be able to exfiltrate tenant secrets.
   tenant_policy = <<-EOT
     # self management
     path "auth/token/lookup-self" { capabilities = ["read"] }
     path "auth/token/renew-self"  { capabilities = ["update"] }
     path "auth/token/revoke-self" { capabilities = ["update"] }
 
-    # full management within this tenant namespace (placeholder).
+    # secret-mount lifecycle (kv/ and db/ mounts created by L3 modules)
     path "sys/mounts"         { capabilities = ["read"] }
     path "sys/mounts/*"       { capabilities = ["create", "read", "update", "delete", "list"] }
+
+    # JWT trust mounts (L1). Enabling an auth method requires sudo on sys/auth.
     path "sys/auth"           { capabilities = ["read"] }
     path "sys/auth/*"         { capabilities = ["create", "read", "update", "delete", "sudo"] }
+
+    # ACL policies written by workload/use-case modules
     path "sys/policies/acl/*" { capabilities = ["create", "read", "update", "delete", "list"] }
 
     # identity management (entities, aliases, groups)
@@ -49,6 +58,10 @@ locals {
     path "identity/group/*"         { capabilities = ["create", "read", "update", "delete", "list"] }
     path "identity/lookup/entity"   { capabilities = ["update"] }
 
-    path "*"                  { capabilities = ["create", "read", "update", "delete", "list"] }
+    # module data planes, scoped to the platform's mount conventions:
+    # JWT backend config + roles, and database-engine connections/roles.
+    path "auth/jwt/*"        { capabilities = ["create", "read", "update", "delete", "list"] }
+    path "auth/jwt-gitlab/*" { capabilities = ["create", "read", "update", "delete", "list"] }
+    path "db/*"              { capabilities = ["create", "read", "update", "delete", "list"] }
   EOT
 }
