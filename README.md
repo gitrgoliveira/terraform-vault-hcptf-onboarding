@@ -22,7 +22,7 @@ The HCP Terraform organization is derived from `TFC_WORKSPACE_SLUG`, and the Vau
 | `project_ids` | Map env to `<tenant>-Vault-<env>` project ID |
 | `project_names` | Map env to `<tenant>-Vault-<env>` project name |
 | `role_names` | Map env to JWT role name |
-| `tenant_namespace_paths` | Map env to tenant namespace `path_fq` (relative to the admin namespace, e.g. `<env>/<tenant>`) |
+| `tenant_namespace_paths` | Map env to the fully qualified tenant namespace path from the cluster root (`path_fq`, e.g. `admin/<env>/<tenant>/` — note the trailing slash); use `vault_namespaces` for `VAULT_NAMESPACE` |
 | `variable_set_ids` | Map env to variable set ID |
 | `vault_namespaces` | Map env to the fully qualified Vault namespace from the cluster root (`admin/<env>/<tenant>`) |
 
@@ -52,6 +52,8 @@ Those are *environment* variables, and Terraform configuration cannot read envir
 * **Vault address** comes from `var.vault_address`, populated by the `TF_VAR_vault_address` environment variable that the project variable set supplies. (`TF_VAR_`-prefixed env vars are the supported way to feed an environment value into a Terraform variable.) The plain `TFC_VAULT_ADDR` that authenticates the provider is *not* readable in configuration, which is why the admin variable set delivers the address a second time as `TF_VAR_vault_address`.
 
 The module copies that address into `TFC_VAULT_ADDR` on each `<tenant>-Vault-<env>` variable set it creates, so the tenant's future workspaces authenticate to the same Vault. Neither value is a hand-entered module argument.
+
+> **Warning — placeholder tenant policy:** The policy this module attaches to every tenant JWT role is a placeholder with near-namespace-admin access (`path "*"` with full CRUD, and `sys/auth/*` with sudo). The namespace boundary and `bound_claims` below control who can *authenticate*; they do not limit what an authenticated token can *do* inside the tenant namespace. Replace the policy with least-privilege paths before production use.
 
 ## Isolation
 
